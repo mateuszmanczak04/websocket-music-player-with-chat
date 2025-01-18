@@ -68,23 +68,30 @@ const Player = ({ song }: T_Props) => {
 	}, [song]);
 
 	return (
-		<div className='group flex max-w-md flex-col rounded-xl bg-white p-4'>
-			<Image
-				src={`${API_URL}/${song.cover}`}
-				alt={song.title}
-				width={200}
-				height={200}
-				className='w-full rounded-xl'
-			/>
-			<h2 className='mx-2 mt-4 text-xl font-bold'>{song.title}</h2>
-			<div className='mt-4 flex gap-4 rounded-xl bg-neutral-100 p-4'>
-				<button
-					className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
-					onClick={togglePlay}>
-					{isPlaying ? <Pause /> : <Play />}
-				</button>
+		<article className='group mt-4 flex max-w-md flex-col rounded-xl bg-neutral-100 p-6'>
+			<div className='relative'>
+				<Image
+					src={`${API_URL}/${song.cover}`}
+					alt={song.title}
+					width={200}
+					height={200}
+					className='w-full rounded-xl'
+				/>
+				<h2 className='absolute inset-x-0 bottom-0 rounded-b-xl bg-gradient-to-b from-transparent via-black/30 to-black/40 p-2 pt-8 text-center text-xl font-semibold text-white'>
+					{song.title}
+				</h2>
+			</div>
+			<div className='mt-4 rounded-xl bg-white p-6'>
+				<div className='flex justify-center'>
+					<button
+						className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
+						onClick={togglePlay}>
+						{isPlaying ? <Pause /> : <Play />}
+					</button>
+				</div>
+
 				<input
-					className='flex-1'
+					className='mt-4 w-full'
 					type='range'
 					min='0'
 					max='100'
@@ -93,7 +100,7 @@ const Player = ({ song }: T_Props) => {
 				/>
 			</div>
 			<audio ref={audioRef} src={`${API_URL}/${song.audio}`} />
-		</div>
+		</article>
 	);
 };
 

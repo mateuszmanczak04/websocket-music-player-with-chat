@@ -1,7 +1,11 @@
+import { Metadata } from 'next';
+import App from '../components/app';
+
+export const metadata: Metadata = {
+	title: 'Spotify Clone',
+	description: 'A Spotify clone built with Next.js',
+};
+
 export default function Home() {
-	return (
-		<div>
-			<h1 className='text-8xl font-black'>Spotify clone</h1>
-		</div>
-	);
+	return <App />;
 }

@@ -6,8 +6,8 @@ import { socket } from '../utils/socket';
 type T_Props = {
 	isConnected: boolean;
 	users: string[];
-	handleEmitPlay: (songId: string) => void;
-	setPlayCallback: (callback: (songId: string) => void) => void;
+	handleEmitPlay: (songId: string, progress: number) => void;
+	setPlayCallback: (callback: (songId: string, progress: number) => void) => void;
 };
 
 const SocketContext = createContext<T_Props | undefined>(undefined);
@@ -27,7 +27,7 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	const [isConnected, setIsConnected] = useState(false);
 	const [users, setUsers] = useState<string[]>([]);
-	const playCallback = useRef<(songId: string) => void>(() => {});
+	const playCallback = useRef<(songId: string, progress: number) => void>(() => {});
 
 	useEffect(() => {
 		socket.on('connect', () => {
@@ -41,9 +41,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 			setUsers(users);
 		});
 
-		socket.on('play', (songId: string) => {
+		socket.on('play', (songId: string, progress: number) => {
 			if (playCallback) {
-				playCallback.current(songId);
+				playCallback.current(songId, progress);
 			}
 		});
 
@@ -54,11 +54,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 		};
 	}, [playCallback]);
 
-	const handleEmitPlay = (songId: string) => {
-		socket.emit('play', songId);
+	const handleEmitPlay = (songId: string, progress: number) => {
+		socket.emit('play', songId, progress);
 	};
 
-	const setPlayCallback = (callback: (songId: string) => void) => {
+	const setPlayCallback = (callback: (songId: string, progress: number) => void) => {
 		playCallback.current = callback;
 	};
 

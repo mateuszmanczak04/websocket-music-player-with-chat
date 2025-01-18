@@ -86,8 +86,8 @@ io.on('connection', (socket) => {
 		io.emit('users', Array.from(connectedUsers));
 	});
 
-	socket.on('play', (songId: string) => {
-		io.emit('play', songId);
+	socket.on('play', (songId: string, progress: number) => {
+		io.emit('play', songId, progress);
 	});
 });
 

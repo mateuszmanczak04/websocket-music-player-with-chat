@@ -29,7 +29,6 @@ const Player = ({ song, deleteSong }: T_Props) => {
 		}
 	}, [isPlaying]);
 
-	// Update the progress bar when the song is playing
 	const handleTimeUpdate = () => {
 		if (audioRef.current) {
 			const currentTime = audioRef.current.currentTime;
@@ -38,7 +37,6 @@ const Player = ({ song, deleteSong }: T_Props) => {
 		}
 	};
 
-	// Update the song progress when the user changes the progress bar
 	const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (audioRef.current) {
 			const newProgress = Number(event.target.value);
@@ -56,16 +54,16 @@ const Player = ({ song, deleteSong }: T_Props) => {
 		}
 	};
 
-	// Set the play callback when the song starts playing
 	useEffect(() => {
-		setPlayCallback((songId) => {
+		setPlayCallback((songId, progress) => {
 			if (songId === song.id) {
 				togglePlay();
+				setProgress(progress);
+				audioRef.current.currentTime = (audioRef.current.duration * progress) / 100;
 			}
 		});
 	}, [song.id, setPlayCallback, togglePlay]);
 
-	// Update the progress bar when the song is playing
 	useEffect(() => {
 		const audioElement = audioRef.current;
 		if (audioElement) {
@@ -78,7 +76,6 @@ const Player = ({ song, deleteSong }: T_Props) => {
 		};
 	}, []);
 
-	// Reset the player when the song changes
 	useEffect(() => {
 		setIsPlaying(false);
 		setProgress(0);
@@ -106,7 +103,7 @@ const Player = ({ song, deleteSong }: T_Props) => {
 				<div className='flex justify-center gap-2'>
 					<button
 						className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
-						onClick={() => handleEmitPlay(song.id)}>
+						onClick={() => handleEmitPlay(song.id, progress)}>
 						{isPlaying ? <Pause /> : <Play />}
 					</button>
 					<button

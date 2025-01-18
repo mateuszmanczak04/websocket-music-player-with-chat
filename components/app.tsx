@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { API_URL } from '../utils/api';
 import { Song } from '../utils/types';
-import ConnectedUsers from './connected-users';
 import Player from './player';
 import TrackList from './track-list';
 import UploadForm from './upload-form';
@@ -46,7 +45,7 @@ const App = () => {
 			</nav>
 			<main className='grow-1 shrink-1 flex basis-full flex-col bg-white p-8'>
 				<h1 className='text-3xl font-bold'>Spotify Clone</h1>
-				<ConnectedUsers />
+				{/* <ConnectedUsers /> */}
 				{currentSong ? <Player song={currentSong} /> : <p>No song selected</p>}
 			</main>
 		</div>

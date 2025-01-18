@@ -3,6 +3,7 @@
 import { Pause, Play } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { API_URL } from '../utils/api';
 import { Song } from '../utils/types';
 
 type T_Props = {
@@ -19,7 +20,7 @@ const Player = ({ song }: T_Props) => {
 	return (
 		<div className='group flex max-w-md flex-col rounded-xl bg-white p-4'>
 			<Image
-				src={song.cover}
+				src={`${API_URL}/${song.cover}`}
 				alt={song.title}
 				width={200}
 				height={200}

@@ -3,7 +3,6 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
 import multer from 'multer';
-import { nanoid } from 'nanoid';
 import { Server } from 'socket.io';
 import {
 	createSong,
@@ -64,19 +63,28 @@ const io = new Server(server, {
 
 const connectedUsers = new Set<string>();
 
+// Needed to fix a bug with the 'node-XMLHttpRequest' user-agent
+io.use((socket, next) => {
+	const userAgent = socket.handshake.headers['user-agent'];
+
+	// Block connections with 'node-XMLHttpRequest' user-agent
+	if (userAgent === 'node-XMLHttpRequest') {
+		return next(new Error('Unauthorized connection'));
+	}
+
+	next(); // Allow other connections
+});
+
 io.on('connection', (socket) => {
-	const userId = nanoid();
+	const userId = socket.id;
 	connectedUsers.add(userId);
 
 	socket.emit('users', Array.from(connectedUsers));
+	io.emit('users', Array.from(connectedUsers));
 
 	socket.on('disconnect', () => {
 		connectedUsers.delete(userId);
-		socket.emit('users', Array.from(connectedUsers));
-	});
-
-	socket.on('users', () => {
-		socket.emit('users', Array.from(connectedUsers));
+		io.emit('users', Array.from(connectedUsers));
 	});
 });
 

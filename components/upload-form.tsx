@@ -30,25 +30,49 @@ const UploadForm = () => {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className='flex flex-col gap-4 bg-neutral-200 p-4'>
-			<label htmlFor='audio'>Audio file</label>
-			<input type='file' name='audio' id='audio' accept='.mp3' />
+		<form onSubmit={handleSubmit} className='flex flex-col rounded-xl bg-white p-6'>
+			<h2 className='mx-2 text-xl font-bold'>Add new song to library</h2>
 
-			<label htmlFor='cover'>Cover image</label>
-			<input type='file' name='cover' id='cover' accept='.jpg,.png' />
-
-			<label htmlFor='title'>Song title</label>
+			<label htmlFor='title' className='mx-2 mt-2 font-semibold'>
+				Title
+			</label>
 			<input
 				type='text'
 				name='title'
 				id='title'
 				placeholder='Song title'
+				className='rounded-xl border border-neutral-300 px-3 py-2'
 				required
 				value={title}
 				onChange={(e) => setTitle(e.target.value)}
 			/>
 
-			<button type='submit'>Add to library</button>
+			<label
+				htmlFor='audio'
+				className='mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 px-3 py-2 font-medium hover:bg-neutral-200'>
+				Audio file{' '}
+				<input type='file' required name='audio' id='audio' accept='.mp3' className='' />
+			</label>
+
+			<label
+				htmlFor='cover'
+				className='mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 px-3 py-2 font-medium hover:bg-neutral-200'>
+				Cover image{' '}
+				<input
+					type='file'
+					required
+					name='cover'
+					id='cover'
+					accept='.jpg,.png'
+					className=''
+				/>
+			</label>
+
+			<button
+				type='submit'
+				className='mt-4 rounded-xl bg-blue-500 px-3 py-2 text-white hover:bg-blue-400'>
+				Add to library
+			</button>
 		</form>
 	);
 };

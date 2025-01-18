@@ -14,7 +14,6 @@ const App = () => {
 	const [currentSongId, setCurrentSongId] = useState('');
 
 	useEffect(() => {
-		console.log(`${API_URL}/songs`);
 		fetch(`${API_URL}/songs`)
 			.then((res) => res.json())
 			.then((data) => {
@@ -33,11 +32,11 @@ const App = () => {
 
 	return (
 		<div className='flex h-full'>
-			<nav className='flex h-full flex-1 flex-col overflow-y-scroll bg-neutral-100 p-8'>
+			<nav className='flex h-full flex-1 flex-col overflow-y-scroll bg-blue-100 p-8'>
 				<UploadForm />
 				<TrackList songs={songs} />
 			</nav>
-			<main className='flex flex-[3] flex-col bg-neutral-200 p-8'>
+			<main className='flex flex-[3] flex-col bg-white p-8'>
 				<h1 className='text-3xl font-bold'>Spotify Clone</h1>
 				<ConnectedUsers />
 				{currentSong ? <Player song={currentSong} /> : <p>No song selected</p>}

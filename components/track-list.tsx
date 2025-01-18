@@ -22,7 +22,6 @@ const TrackList = ({ songs }: T_Props) => {
 					/>
 					<div>
 						<h2>Title: {song.title}</h2>
-						<p>Audio url:{song.audio} </p>
 					</div>
 				</div>
 			))}

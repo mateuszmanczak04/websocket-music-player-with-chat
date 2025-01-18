@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { API_URL } from '../utils/api';
 
 const UploadForm = () => {
-	const [audio, setAudio] = useState<string>('xxx');
 	const [title, setTitle] = useState<string>('xxx');
 
 	const handleSubmit = (event: React.FormEvent) => {
@@ -32,19 +31,8 @@ const UploadForm = () => {
 
 	return (
 		<form onSubmit={handleSubmit} className='flex flex-col gap-4 bg-neutral-200 p-4'>
-			{/* <label htmlFor='audioFile'>Audio file</label>
-			<input type='file' name='audioFile' id='audioFile' accept='.mp3' /> */}
-
-			<label htmlFor='audio'>Audio URL</label>
-			<input
-				type='text'
-				name='audio'
-				id='audio'
-				placeholder='Song audio url'
-				required
-				value={audio}
-				onChange={(e) => setAudio(e.target.value)}
-			/>
+			<label htmlFor='audio'>Audio file</label>
+			<input type='file' name='audio' id='audio' accept='.mp3' />
 
 			<label htmlFor='cover'>Cover image</label>
 			<input type='file' name='cover' id='cover' accept='.jpg,.png' />

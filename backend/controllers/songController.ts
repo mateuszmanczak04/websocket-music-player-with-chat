@@ -31,16 +31,20 @@ export const getSongById = async (req: Request, res: Response): Promise<void> =>
 
 // Create a new song
 export const createSong = async (req: Request, res: Response): Promise<void> => {
-	const { title, audio } = req.body;
-	const cover = req.file as Express.Multer.File;
+	const { title } = req.body;
+	const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+	const cover = files.cover ? files.cover[0] : null;
+	const audio = files.audio ? files.audio[0] : null;
 
-	if (!title || title.trim().length === 0 || !audio || audio.trim().length === 0 || !cover) {
+	if (!title || title.trim().length === 0 || !audio || !cover) {
 		res.status(400).json({ message: 'Bad request' });
 		return;
 	}
 
 	try {
-		const newSong = await db.song.create({ data: { title, audio, cover: cover.path } });
+		const newSong = await db.song.create({
+			data: { title, audio: audio.path, cover: cover.path },
+		});
 
 		res.status(201).json(newSong);
 	} catch {

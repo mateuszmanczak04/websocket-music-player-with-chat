@@ -1,6 +1,7 @@
 import cors from 'cors';
 import type { Request, Response } from 'express';
 import express from 'express';
+import multer from 'multer';
 import {
 	createSong,
 	deleteSong,
@@ -8,7 +9,6 @@ import {
 	getSongById,
 	updateSong,
 } from './controllers/songController';
-import multer from 'multer';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -36,7 +36,14 @@ app.use('/uploads', express.static('uploads'));
 
 app.get('/songs', getAllSongs);
 app.get('/songs/:id', getSongById);
-app.post('/songs', upload.single('cover'), createSong);
+app.post(
+	'/songs',
+	upload.fields([
+		{ name: 'audio', maxCount: 1 },
+		{ name: 'cover', maxCount: 1 },
+	]),
+	createSong,
+);
 app.put('/songs/:id', updateSong);
 app.delete('/songs/:id', deleteSong);
 

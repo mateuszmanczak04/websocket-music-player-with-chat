@@ -52,7 +52,7 @@ const App = () => {
 				<h1 className='text-3xl font-bold'>Spotify Clone</h1>
 				<ConnectedUsers />
 				{currentSong ? (
-					<Player deleteSong={deleteSong} song={currentSong} />
+					<Player playSong={playSong} deleteSong={deleteSong} song={currentSong} />
 				) : (
 					<p className='mt-4'>No song selected</p>
 				)}

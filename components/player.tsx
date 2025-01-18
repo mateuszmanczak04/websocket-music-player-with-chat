@@ -10,9 +10,10 @@ import { Song } from '../utils/types';
 type T_Props = {
 	song: Song;
 	deleteSong: (id: string) => void;
+	playSong: (id: string) => void;
 };
 
-const Player = ({ song, deleteSong }: T_Props) => {
+const Player = ({ song, deleteSong, playSong }: T_Props) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null!);
@@ -55,16 +56,6 @@ const Player = ({ song, deleteSong }: T_Props) => {
 	};
 
 	useEffect(() => {
-		setPlayCallback((songId, progress) => {
-			if (songId === song.id) {
-				togglePlay();
-				setProgress(progress);
-				audioRef.current.currentTime = (audioRef.current.duration * progress) / 100;
-			}
-		});
-	}, [song.id, setPlayCallback, togglePlay]);
-
-	useEffect(() => {
 		const audioElement = audioRef.current;
 		if (audioElement) {
 			audioElement.addEventListener('timeupdate', handleTimeUpdate);
@@ -76,6 +67,7 @@ const Player = ({ song, deleteSong }: T_Props) => {
 		};
 	}, []);
 
+	// Fired when user changes the song
 	useEffect(() => {
 		setIsPlaying(false);
 		setProgress(0);
@@ -84,6 +76,18 @@ const Player = ({ song, deleteSong }: T_Props) => {
 			audioRef.current.currentTime = 0;
 		}
 	}, [song]);
+
+	// A listener for event from websocket
+	useEffect(() => {
+		setPlayCallback((songId, progress) => {
+			if (songId !== song.id) {
+				playSong(songId);
+			}
+			togglePlay();
+			setProgress(progress);
+			audioRef.current.currentTime = (audioRef.current.duration * progress) / 100;
+		});
+	}, [song.id, setPlayCallback, togglePlay, playSong]);
 
 	return (
 		<article className='group mt-4 flex max-w-md flex-col rounded-xl bg-neutral-100 p-6'>

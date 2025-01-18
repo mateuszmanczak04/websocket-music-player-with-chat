@@ -1,29 +1,39 @@
 'use client';
 
+import { Play } from 'lucide-react';
 import Image from 'next/image';
 import { API_URL } from '../utils/api';
 import { Song } from '../utils/types';
 
 type T_Props = {
 	songs: Song[];
+	playSong: (id: string) => void;
 };
 
-const TrackList = ({ songs }: T_Props) => {
+const TrackList = ({ songs, playSong }: T_Props) => {
 	return (
-		<div className='mt-4 flex flex-col gap-4 bg-neutral-200 p-4'>
+		<div className='mt-4 flex flex-col gap-4 rounded-xl bg-white p-6'>
+			<h2 className='mx-2 text-xl font-bold'>Songs</h2>
+			{songs.length === 0 && <p>No songs available</p>}
 			{songs.map((song) => (
-				<div key={song.id} className='flex gap-4'>
+				<article
+					key={song.id}
+					className='group flex cursor-pointer items-center gap-4 rounded-t-xl border-b border-gray-200 p-4 pb-4 hover:bg-neutral-100'
+					onClick={() => playSong(song.id)}>
 					<Image
 						src={`${API_URL}/${song.cover}`}
 						alt={song.title}
 						width={48}
 						height={48}
-						className='h-16 w-16'
+						className='h-16 w-16 rounded-xl'
 					/>
 					<div>
-						<h2>Title: {song.title}</h2>
+						<h2 className='text-lg font-bold group-hover:underline'>{song.title}</h2>
+						<button className='grid size-8 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 group-hover:bg-neutral-200'>
+							<Play className='size-4' />
+						</button>
 					</div>
-				</div>
+				</article>
 			))}
 		</div>
 	);

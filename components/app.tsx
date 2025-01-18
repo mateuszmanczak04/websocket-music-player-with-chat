@@ -13,6 +13,10 @@ const App = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [currentSongId, setCurrentSongId] = useState('');
 
+	const playSong = (id: string) => {
+		setCurrentSongId(id);
+	};
+
 	useEffect(() => {
 		fetch(`${API_URL}/songs`)
 			.then((res) => res.json())
@@ -34,7 +38,7 @@ const App = () => {
 		<div className='flex h-full'>
 			<nav className='flex h-full flex-1 flex-col overflow-y-scroll bg-blue-100 p-8'>
 				<UploadForm />
-				<TrackList songs={songs} />
+				<TrackList playSong={playSong} songs={songs} />
 			</nav>
 			<main className='flex flex-[3] flex-col bg-white p-8'>
 				<h1 className='text-3xl font-bold'>Spotify Clone</h1>

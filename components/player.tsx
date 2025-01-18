@@ -17,7 +17,7 @@ const Player = ({ song }: T_Props) => {
 	};
 
 	return (
-		<div className='flex max-w-md flex-col rounded-xl bg-white p-4'>
+		<div className='group flex max-w-md flex-col rounded-xl bg-white p-4'>
 			<Image
 				src={song.cover}
 				alt={song.title}
@@ -28,7 +28,7 @@ const Player = ({ song }: T_Props) => {
 			<h2 className='mx-2 mt-4 text-xl font-bold'>{song.title}</h2>
 			<div className='mt-4 flex gap-4 rounded-xl bg-neutral-100 p-4'>
 				<button
-					className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 hover:bg-neutral-200'
+					className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
 					onClick={togglePlay}>
 					{isPlaying ? <Pause /> : <Play />}
 				</button>

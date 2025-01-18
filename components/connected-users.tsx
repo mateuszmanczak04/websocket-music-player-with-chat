@@ -3,13 +3,12 @@
 import { useSocket } from '../context/socket-context';
 
 const ConnectedUsers = () => {
-	const { users, isConnected } = useSocket();
+	const { users } = useSocket();
 
 	return (
-		<div className='bg-neutral-200 p-4'>
+		<div className='mt-4 rounded-xl bg-neutral-100 p-6'>
 			<h2 className='text-lg font-bold'>Connected users</h2>
-			<p>{isConnected ? 'Connected' : 'Disconnected'}</p>
-			<ul className='flex gap-x-2'>
+			<ul className='mt-2 flex flex-wrap gap-x-2'>
 				{users.map((user) => (
 					<li key={user} className='rounded-full bg-white px-3 py-1'>
 						{user}

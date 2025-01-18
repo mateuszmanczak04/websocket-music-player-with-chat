@@ -10,43 +10,15 @@ import { Song } from '../utils/types';
 type T_Props = {
 	song: Song;
 	deleteSong: (id: string) => void;
-	playSong: (id: string) => void;
 };
 
-const Player = ({ song, deleteSong, playSong }: T_Props) => {
+const Player = ({ song, deleteSong }: T_Props) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null!);
-	const { setPlayCallback, handleEmitPlay } = useSocket();
+	const { playerState, socket } = useSocket();
 
-	const togglePlay = useCallback(() => {
-		if (audioRef.current) {
-			if (isPlaying) {
-				audioRef.current.pause();
-			} else {
-				audioRef.current.play();
-			}
-			setIsPlaying(!isPlaying);
-		}
-	}, [isPlaying]);
-
-	const handleTimeUpdate = () => {
-		if (audioRef.current) {
-			const currentTime = audioRef.current.currentTime;
-			const duration = audioRef.current.duration;
-			setProgress((currentTime / duration) * 100);
-		}
-	};
-
-	const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (audioRef.current) {
-			const newProgress = Number(event.target.value);
-			audioRef.current.currentTime = (audioRef.current.duration * newProgress) / 100;
-			setProgress(newProgress);
-		}
-	};
-
-	const handleDelete = async () => {
+	const handleDeleteSong = async () => {
 		const response = await fetch(`${API_URL}/songs/${song.id}`, {
 			method: 'DELETE',
 		});
@@ -55,7 +27,37 @@ const Player = ({ song, deleteSong, playSong }: T_Props) => {
 		}
 	};
 
+	// When user clicks on play/pause button
+	const togglePlay = useCallback(() => {
+		if (!audioRef.current) return;
+
+		socket.emit('set-player-state', {
+			currentSongId: song.id,
+			currentProgress: progress,
+			isPlaying: !isPlaying,
+		});
+	}, [progress, socket, song.id, isPlaying]);
+
+	// When user clicks on progress bar
+	const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (!audioRef.current) return;
+
+		const newProgress = Number(event.target.value);
+		socket.emit('set-player-state', {
+			currentProgress: newProgress,
+		});
+	};
+
+	// Synchronize progress state with audio element
 	useEffect(() => {
+		const handleTimeUpdate = () => {
+			if (audioRef.current) {
+				const currentTime = audioRef.current.currentTime;
+				const duration = audioRef.current.duration;
+				setProgress((currentTime / duration) * 100);
+			}
+		};
+
 		const audioElement = audioRef.current;
 		if (audioElement) {
 			audioElement.addEventListener('timeupdate', handleTimeUpdate);
@@ -67,27 +69,26 @@ const Player = ({ song, deleteSong, playSong }: T_Props) => {
 		};
 	}, []);
 
-	// Fired when user changes the song
-	useEffect(() => {
-		setIsPlaying(false);
-		setProgress(0);
-		if (audioRef.current) {
-			audioRef.current.pause();
-			audioRef.current.currentTime = 0;
-		}
-	}, [song]);
-
 	// A listener for event from websocket
 	useEffect(() => {
-		setPlayCallback((songId, progress) => {
-			if (songId !== song.id) {
-				playSong(songId);
-			}
-			togglePlay();
-			setProgress(progress);
-			audioRef.current.currentTime = (audioRef.current.duration * progress) / 100;
-		});
-	}, [song.id, setPlayCallback, togglePlay, playSong]);
+		if (!navigator.userActivation.hasBeenActive) return;
+
+		setIsPlaying(playerState.isPlaying);
+		setProgress(playerState.currentProgress);
+
+		if (audioRef.current.duration) {
+			audioRef.current.currentTime =
+				(playerState.currentProgress / 100) * audioRef.current.duration;
+		}
+
+		if (playerState.isPlaying) {
+			audioRef.current.play();
+		} else {
+			audioRef.current.pause();
+		}
+	}, [playerState]);
+
+	console.table(playerState);
 
 	return (
 		<article className='group mt-4 flex max-w-md flex-col rounded-xl bg-neutral-100 p-6'>
@@ -107,12 +108,12 @@ const Player = ({ song, deleteSong, playSong }: T_Props) => {
 				<div className='flex justify-center gap-2'>
 					<button
 						className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
-						onClick={() => handleEmitPlay(song.id, progress)}>
+						onClick={togglePlay}>
 						{isPlaying ? <Pause /> : <Play />}
 					</button>
 					<button
 						className='grid size-12 cursor-pointer place-content-center rounded-full bg-red-100 text-red-800 hover:bg-red-200'
-						onClick={handleDelete}>
+						onClick={handleDeleteSong}>
 						<Trash />
 					</button>
 				</div>

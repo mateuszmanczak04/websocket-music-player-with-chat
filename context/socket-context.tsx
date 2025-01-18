@@ -1,13 +1,14 @@
 'use client';
 
-import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { socket } from '../utils/socket';
+import { T_PlayerState } from '../utils/types';
 
 type T_Props = {
 	isConnected: boolean;
 	users: string[];
-	handleEmitPlay: (songId: string, progress: number) => void;
-	setPlayCallback: (callback: (songId: string, progress: number) => void) => void;
+	playerState: T_PlayerState;
+	socket: typeof socket;
 };
 
 const SocketContext = createContext<T_Props | undefined>(undefined);
@@ -27,7 +28,11 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	const [isConnected, setIsConnected] = useState(false);
 	const [users, setUsers] = useState<string[]>([]);
-	const playCallback = useRef<(songId: string, progress: number) => void>(() => {});
+	const [playerState, setPlayerState] = useState<T_PlayerState>({
+		currentSongId: '',
+		currentProgress: 0,
+		isPlaying: false,
+	});
 
 	useEffect(() => {
 		socket.on('connect', () => {
@@ -41,29 +46,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 			setUsers(users);
 		});
 
-		socket.on('play', (songId: string, progress: number) => {
-			if (playCallback) {
-				playCallback.current(songId, progress);
-			}
+		socket.on('player-state', (state: T_PlayerState) => {
+			setPlayerState(state);
 		});
 
 		return () => {
 			socket.off('connect');
 			socket.off('disconnect');
 			socket.off('users');
+			socket.off('player-state');
 		};
-	}, [playCallback]);
-
-	const handleEmitPlay = (songId: string, progress: number) => {
-		socket.emit('play', songId, progress);
-	};
-
-	const setPlayCallback = (callback: (songId: string, progress: number) => void) => {
-		playCallback.current = callback;
-	};
+	}, []);
 
 	return (
-		<SocketContext.Provider value={{ isConnected, users, handleEmitPlay, setPlayCallback }}>
+		<SocketContext.Provider value={{ isConnected, users, playerState, socket }}>
 			{children}
 		</SocketContext.Provider>
 	);

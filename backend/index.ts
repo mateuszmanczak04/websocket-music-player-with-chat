@@ -62,6 +62,11 @@ const io = new Server(server, {
 });
 
 const connectedUsers = new Set<string>();
+const playerState = {
+	currentSongId: '',
+	currentProgress: 0,
+	isPlaying: false,
+};
 
 // Needed to fix a bug with the 'node-XMLHttpRequest' user-agent
 io.use((socket, next) => {
@@ -80,14 +85,23 @@ io.on('connection', (socket) => {
 	connectedUsers.add(userId);
 
 	io.emit('users', Array.from(connectedUsers));
+	socket.emit('player-state', playerState);
 
 	socket.on('disconnect', () => {
 		connectedUsers.delete(userId);
 		io.emit('users', Array.from(connectedUsers));
 	});
 
-	socket.on('play', (songId: string, progress: number) => {
-		io.emit('play', songId, progress);
+	socket.on('set-player-state', (state) => {
+		playerState.isPlaying =
+			state.isPlaying !== undefined ? state.isPlaying : playerState.isPlaying;
+		playerState.currentProgress =
+			state.currentProgress !== undefined
+				? state.currentProgress
+				: playerState.currentProgress;
+		playerState.currentSongId =
+			state.currentSongId !== undefined ? state.currentSongId : playerState.currentSongId;
+		io.emit('player-state', playerState);
 	});
 });
 

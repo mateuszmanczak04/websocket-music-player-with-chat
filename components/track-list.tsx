@@ -2,15 +2,23 @@
 
 import { Play } from 'lucide-react';
 import Image from 'next/image';
+import { useSocket } from '../context/socket-context';
 import { API_URL } from '../utils/api';
 import { Song } from '../utils/types';
 
 type T_Props = {
 	songs: Song[];
-	playSong: (id: string) => void;
 };
 
-const TrackList = ({ songs, playSong }: T_Props) => {
+const TrackList = ({ songs }: T_Props) => {
+	const { socket } = useSocket();
+
+	const handleChooseSong = (songId: string) => {
+		socket.emit('set-player-state', {
+			currentSongId: songId,
+		});
+	};
+
 	return (
 		<div className='mt-4 flex flex-1 flex-col gap-4 overflow-y-scroll rounded-xl bg-white p-6'>
 			<h2 className='mx-2 text-xl font-bold'>Songs</h2>
@@ -19,7 +27,7 @@ const TrackList = ({ songs, playSong }: T_Props) => {
 				<article
 					key={song.id}
 					className='group flex cursor-pointer items-center gap-4 rounded-t-xl border-b border-gray-200 p-4 pb-4 hover:bg-neutral-100'
-					onClick={() => playSong(song.id)}>
+					onClick={() => handleChooseSong(song.id)}>
 					<Image
 						src={`${API_URL}/${song.cover}`}
 						alt={song.title}

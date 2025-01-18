@@ -1,6 +1,6 @@
 'use client';
 
-import { Pause, Play } from 'lucide-react';
+import { Pause, Play, Trash } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { API_URL } from '../utils/api';
@@ -8,9 +8,10 @@ import { Song } from '../utils/types';
 
 type T_Props = {
 	song: Song;
+	deleteSong: (id: string) => void;
 };
 
-const Player = ({ song }: T_Props) => {
+const Player = ({ song, deleteSong }: T_Props) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null!);
@@ -41,6 +42,15 @@ const Player = ({ song }: T_Props) => {
 			const newProgress = Number(event.target.value);
 			audioRef.current.currentTime = (audioRef.current.duration * newProgress) / 100;
 			setProgress(newProgress);
+		}
+	};
+
+	const handleDelete = async () => {
+		const response = await fetch(`${API_URL}/songs/${song.id}`, {
+			method: 'DELETE',
+		});
+		if (response.ok) {
+			deleteSong(song.id);
 		}
 	};
 
@@ -82,11 +92,16 @@ const Player = ({ song }: T_Props) => {
 				</h2>
 			</div>
 			<div className='mt-4 rounded-xl bg-white p-6'>
-				<div className='flex justify-center'>
+				<div className='flex justify-center gap-2'>
 					<button
 						className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
 						onClick={togglePlay}>
 						{isPlaying ? <Pause /> : <Play />}
+					</button>
+					<button
+						className='grid size-12 cursor-pointer place-content-center rounded-full bg-red-100 text-red-800 hover:bg-red-200'
+						onClick={handleDelete}>
+						<Trash />
 					</button>
 				</div>
 
@@ -95,7 +110,7 @@ const Player = ({ song }: T_Props) => {
 					type='range'
 					min='0'
 					max='100'
-					value={progress}
+					value={progress.toString()}
 					onChange={handleProgressChange}
 				/>
 			</div>

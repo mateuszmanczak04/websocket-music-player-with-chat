@@ -20,6 +20,10 @@ const App = () => {
 		setSongs((prev) => [song, ...prev]);
 	};
 
+	const deleteSong = async (id: string) => {
+		setSongs((prev) => prev.filter((song) => song.id !== id));
+	};
+
 	useEffect(() => {
 		fetch(`${API_URL}/songs`)
 			.then((res) => res.json())
@@ -46,7 +50,11 @@ const App = () => {
 			<main className='grow-1 shrink-1 flex basis-full flex-col bg-white p-8'>
 				<h1 className='text-3xl font-bold'>Spotify Clone</h1>
 				{/* <ConnectedUsers /> */}
-				{currentSong ? <Player song={currentSong} /> : <p>No song selected</p>}
+				{currentSong ? (
+					<Player deleteSong={deleteSong} song={currentSong} />
+				) : (
+					<p>No song selected</p>
+				)}
 			</main>
 		</div>
 	);

@@ -1,18 +1,27 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { API_URL } from '../utils/api';
+import { Song } from '../utils/types';
 
-type T_Props = {
-	songs: Array<{
-		id: string;
-		title: string;
-		artist: string;
-		album: string;
-		cover: string;
-	}>;
-};
+const TrackList = () => {
+	const [songs, setSongs] = useState<Song[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
-const TrackList = ({ songs }: T_Props) => {
+	useEffect(() => {
+		console.log(`${API_URL}/songs`);
+		fetch(`${API_URL}/songs`)
+			.then((res) => res.json())
+			.then((data) => setSongs(data))
+			.catch((err) => console.error(err))
+			.finally(() => setIsLoading(false));
+	}, []);
+
+	if (isLoading) {
+		return <p>Loading...</p>;
+	}
+
 	return (
 		<div className='mt-4 flex flex-col gap-4 bg-neutral-200 p-4'>
 			{songs.map((song) => (
@@ -25,10 +34,8 @@ const TrackList = ({ songs }: T_Props) => {
 						className='h-16 w-16'
 					/>
 					<div>
-						<h2>{song.title}</h2>
-						<p>
-							{song.artist} - {song.album}
-						</p>
+						<h2>Title: {song.title}</h2>
+						<p>Audio url:{song.audio} </p>
 					</div>
 				</div>
 			))}

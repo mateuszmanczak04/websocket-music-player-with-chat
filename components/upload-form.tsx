@@ -2,8 +2,13 @@
 
 import React, { useState } from 'react';
 import { API_URL } from '../utils/api';
+import { Song } from '../utils/types';
 
-const UploadForm = () => {
+type T_Props = {
+	addSong: (song: Song) => void;
+};
+
+const UploadForm = ({ addSong }: T_Props) => {
 	const [title, setTitle] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState('');
@@ -21,7 +26,9 @@ const UploadForm = () => {
 			},
 			body: formData,
 		})
-			.then(() => {
+			.then((res) => res.json())
+			.then((response) => {
+				addSong(response as unknown as Song);
 				setTitle('');
 				setMessage('Song added to library');
 				(event.target as HTMLFormElement).reset();

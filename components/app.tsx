@@ -17,6 +17,10 @@ const App = () => {
 		setCurrentSongId(id);
 	};
 
+	const addSong = (song: Song) => {
+		setSongs((prev) => [song, ...prev]);
+	};
+
 	useEffect(() => {
 		fetch(`${API_URL}/songs`)
 			.then((res) => res.json())
@@ -37,7 +41,7 @@ const App = () => {
 	return (
 		<div className='flex h-full'>
 			<nav className='flex h-full flex-1 flex-col overflow-y-scroll bg-blue-100 p-8'>
-				<UploadForm />
+				<UploadForm addSong={addSong} />
 				<TrackList playSong={playSong} songs={songs} />
 			</nav>
 			<main className='flex flex-[3] flex-col bg-white p-8'>

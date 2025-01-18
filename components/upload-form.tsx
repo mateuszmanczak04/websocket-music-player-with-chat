@@ -4,12 +4,16 @@ import React, { useState } from 'react';
 import { API_URL } from '../utils/api';
 
 const UploadForm = () => {
-	const [title, setTitle] = useState<string>('xxx');
+	const [title, setTitle] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [message, setMessage] = useState('');
+	const [error, setError] = useState('');
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
 		const formData = new FormData(event.target as HTMLFormElement);
 
+		setIsLoading(true);
 		fetch(`${API_URL}/songs`, {
 			method: 'POST',
 			headers: {
@@ -17,16 +21,15 @@ const UploadForm = () => {
 			},
 			body: formData,
 		})
-			.then((response) => {
-				if (response.ok) {
-					alert('Song added to library');
-				} else {
-					alert('Failed to add song to library');
-				}
+			.then(() => {
+				setTitle('');
+				setMessage('Song added to library');
+				(event.target as HTMLFormElement).reset();
 			})
-			.catch((error) => {
-				console.error('Failed to add song to library', error);
-			});
+			.catch(() => {
+				setError('Failed to add song');
+			})
+			.finally(() => setIsLoading(false));
 	};
 
 	return (
@@ -49,14 +52,14 @@ const UploadForm = () => {
 
 			<label
 				htmlFor='audio'
-				className='mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 px-3 py-2 font-medium hover:bg-neutral-200'>
+				className='mt-4 w-full cursor-pointer overflow-clip rounded-xl bg-neutral-100 px-3 py-2 font-medium hover:bg-neutral-200'>
 				Audio file{' '}
 				<input type='file' required name='audio' id='audio' accept='.mp3' className='' />
 			</label>
 
 			<label
 				htmlFor='cover'
-				className='mt-4 w-full cursor-pointer rounded-xl bg-neutral-100 px-3 py-2 font-medium hover:bg-neutral-200'>
+				className='mt-4 w-full cursor-pointer overflow-clip rounded-xl bg-neutral-100 px-3 py-2 font-medium hover:bg-neutral-200'>
 				Cover image{' '}
 				<input
 					type='file'
@@ -73,6 +76,10 @@ const UploadForm = () => {
 				className='mt-4 rounded-xl bg-blue-500 px-3 py-2 text-white hover:bg-blue-400'>
 				Add to library
 			</button>
+
+			{isLoading && <p className='mt-4 text-center'>Loading...</p>}
+			{message && <p className='mt-4 text-center text-green-500'>{message}</p>}
+			{error && <p className='mt-4 text-center text-red-500'>{error}</p>}
 		</form>
 	);
 };

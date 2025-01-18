@@ -1,7 +1,10 @@
 import cors from 'cors';
 import type { Request, Response } from 'express';
 import express from 'express';
+import http from 'http';
 import multer from 'multer';
+import { nanoid } from 'nanoid';
+import { Server } from 'socket.io';
 import {
 	createSong,
 	deleteSong,
@@ -11,6 +14,7 @@ import {
 } from './controllers/songController';
 
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT || 4000;
 
 // CORS configuration
@@ -51,6 +55,31 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Hello, world!');
 });
 
-app.listen(port, () => {
+const io = new Server(server, {
+	cors: {
+		origin: 'http://localhost:3000',
+		methods: ['GET', 'POST'],
+	},
+});
+
+const connectedUsers = new Set<string>();
+
+io.on('connection', (socket) => {
+	const userId = nanoid();
+	connectedUsers.add(userId);
+
+	socket.emit('users', Array.from(connectedUsers));
+
+	socket.on('disconnect', () => {
+		connectedUsers.delete(userId);
+		socket.emit('users', Array.from(connectedUsers));
+	});
+
+	socket.on('users', () => {
+		socket.emit('users', Array.from(connectedUsers));
+	});
+});
+
+server.listen(port, () => {
 	console.log(`Server is running on port ${port}`);
 });

@@ -25,7 +25,7 @@ const TrackList = ({ songs, playSong }: T_Props) => {
 						alt={song.title}
 						width={48}
 						height={48}
-						className='h-16 w-16 rounded-xl'
+						className='h-16 w-16 rounded-xl object-cover'
 					/>
 					<div>
 						<h2 className='text-lg font-bold group-hover:underline'>{song.title}</h2>

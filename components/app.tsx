@@ -53,7 +53,7 @@ const App = () => {
 				{currentSong ? (
 					<Player deleteSong={deleteSong} song={currentSong} />
 				) : (
-					<p>No song selected</p>
+					<p className='mt-4'>No song selected</p>
 				)}
 			</main>
 		</div>

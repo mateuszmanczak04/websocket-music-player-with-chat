@@ -1,9 +1,9 @@
 'use client';
 
-import { useSocketConnection } from '../hooks/useSocketConnection';
+import { useSocket } from '../context/socket-context';
 
 const ConnectedUsers = () => {
-	const { users, isConnected } = useSocketConnection();
+	const { users, isConnected } = useSocket();
 
 	return (
 		<div className='bg-neutral-200 p-4'>

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import App from '../components/app';
+import { SocketProvider } from '../context/socket-context';
 
 export const metadata: Metadata = {
 	title: 'Spotify Clone',
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-	return <App />;
+	return (
+		<SocketProvider>
+			<App />
+		</SocketProvider>
+	);
 }

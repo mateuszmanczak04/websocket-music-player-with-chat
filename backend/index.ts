@@ -79,7 +79,6 @@ io.on('connection', (socket) => {
 	const userId = socket.id;
 	connectedUsers.add(userId);
 
-	socket.emit('users', Array.from(connectedUsers));
 	io.emit('users', Array.from(connectedUsers));
 
 	socket.on('disconnect', () => {

@@ -2,7 +2,8 @@
 
 import { Pause, Play, Trash } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSocket } from '../context/socket-context';
 import { API_URL } from '../utils/api';
 import { Song } from '../utils/types';
 
@@ -15,8 +16,9 @@ const Player = ({ song, deleteSong }: T_Props) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null!);
+	const { setPlayCallback, handleEmitPlay } = useSocket();
 
-	const togglePlay = () => {
+	const togglePlay = useCallback(() => {
 		if (audioRef.current) {
 			if (isPlaying) {
 				audioRef.current.pause();
@@ -25,7 +27,7 @@ const Player = ({ song, deleteSong }: T_Props) => {
 			}
 			setIsPlaying(!isPlaying);
 		}
-	};
+	}, [isPlaying]);
 
 	// Update the progress bar when the song is playing
 	const handleTimeUpdate = () => {
@@ -53,6 +55,15 @@ const Player = ({ song, deleteSong }: T_Props) => {
 			deleteSong(song.id);
 		}
 	};
+
+	// Set the play callback when the song starts playing
+	useEffect(() => {
+		setPlayCallback((songId) => {
+			if (songId === song.id) {
+				togglePlay();
+			}
+		});
+	}, [song.id, setPlayCallback, togglePlay]);
 
 	// Update the progress bar when the song is playing
 	useEffect(() => {
@@ -95,7 +106,7 @@ const Player = ({ song, deleteSong }: T_Props) => {
 				<div className='flex justify-center gap-2'>
 					<button
 						className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
-						onClick={togglePlay}>
+						onClick={() => handleEmitPlay(song.id)}>
 						{isPlaying ? <Pause /> : <Play />}
 					</button>
 					<button

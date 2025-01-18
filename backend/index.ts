@@ -85,6 +85,10 @@ io.on('connection', (socket) => {
 		connectedUsers.delete(userId);
 		io.emit('users', Array.from(connectedUsers));
 	});
+
+	socket.on('play', (songId: string) => {
+		io.emit('play', songId);
+	});
 });
 
 server.listen(port, () => {

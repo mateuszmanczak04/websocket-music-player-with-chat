@@ -40,11 +40,11 @@ const App = () => {
 
 	return (
 		<div className='flex h-full'>
-			<nav className='flex h-full flex-1 flex-col overflow-y-scroll bg-blue-100 p-8'>
+			<nav className='flex h-full shrink-0 grow-0 basis-96 flex-col bg-neutral-100 p-8'>
 				<UploadForm addSong={addSong} />
 				<TrackList playSong={playSong} songs={songs} />
 			</nav>
-			<main className='flex flex-[3] flex-col bg-white p-8'>
+			<main className='grow-1 shrink-1 flex basis-full flex-col bg-white p-8'>
 				<h1 className='text-3xl font-bold'>Spotify Clone</h1>
 				<ConnectedUsers />
 				{currentSong ? <Player song={currentSong} /> : <p>No song selected</p>}

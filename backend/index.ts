@@ -8,23 +8,35 @@ import {
 	getSongById,
 	updateSong,
 } from './controllers/songController';
+import multer from 'multer';
 
 const app = express();
 const port = process.env.PORT || 4000;
 
+// CORS configuration
 const corsOptions = {
 	origin: 'http://localhost:3000',
 	optionsSuccessStatus: 200,
 };
-
 app.use(cors(corsOptions));
 
+// Middleware configuration
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// File upload configuration
+const storage = multer.diskStorage({
+	destination: './uploads/',
+	filename: function (req, file, cb) {
+		cb(null, `${Date.now()}-${file.originalname}`);
+	},
+});
+const upload = multer({ storage: storage });
+app.use('/uploads', express.static('uploads'));
+
 app.get('/songs', getAllSongs);
 app.get('/songs/:id', getSongById);
-app.post('/songs', createSong);
+app.post('/songs', upload.single('cover'), createSong);
 app.put('/songs/:id', updateSong);
 app.delete('/songs/:id', deleteSong);
 

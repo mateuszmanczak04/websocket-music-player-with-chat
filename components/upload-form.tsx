@@ -4,23 +4,19 @@ import React, { useState } from 'react';
 import { API_URL } from '../utils/api';
 
 const UploadForm = () => {
-	const [audio, setAudio] = useState<string>('');
-	const [title, setTitle] = useState<string>('');
-	const [cover, setCover] = useState<string>('');
+	const [audio, setAudio] = useState<string>('xxx');
+	const [title, setTitle] = useState<string>('xxx');
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
-
-		if (!audio || !title) {
-			return;
-		}
+		const formData = new FormData(event.target as HTMLFormElement);
 
 		fetch(`${API_URL}/songs`, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				enctype: 'multipart/form-data',
 			},
-			body: JSON.stringify({ audio, title, cover }),
+			body: formData,
 		})
 			.then((response) => {
 				if (response.ok) {
@@ -50,16 +46,8 @@ const UploadForm = () => {
 				onChange={(e) => setAudio(e.target.value)}
 			/>
 
-			<label htmlFor='cover'>Cover URL</label>
-			<input
-				type='text'
-				name='cover'
-				id='cover'
-				placeholder='Song cover url'
-				required
-				value={cover}
-				onChange={(e) => setCover(e.target.value)}
-			/>
+			<label htmlFor='cover'>Cover image</label>
+			<input type='file' name='cover' id='cover' accept='.jpg,.png' />
 
 			<label htmlFor='title'>Song title</label>
 			<input

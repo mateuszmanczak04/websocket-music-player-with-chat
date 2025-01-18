@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { API_URL } from '../utils/api';
 import { Song } from '../utils/types';
 
 type T_Props = {
@@ -13,7 +14,7 @@ const TrackList = ({ songs }: T_Props) => {
 			{songs.map((song) => (
 				<div key={song.id} className='flex gap-4'>
 					<Image
-						src={song.cover}
+						src={`${API_URL}/${song.cover}`}
 						alt={song.title}
 						width={48}
 						height={48}

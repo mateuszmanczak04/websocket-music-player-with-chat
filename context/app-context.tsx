@@ -86,6 +86,7 @@ export const AppProvider = ({ children }: T_ProviderProps) => {
 			socket.off('player-state');
 			socket.off('songs');
 			socket.off('messages');
+			socket.off('group-key');
 		};
 	}, []);
 

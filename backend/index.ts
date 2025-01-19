@@ -6,6 +6,7 @@ import express from 'express';
 import http from 'http';
 import multer from 'multer';
 import { Server } from 'socket.io';
+import { names, uniqueNamesGenerator } from 'unique-names-generator';
 import { getMessages } from './controllers/messageController';
 import {
 	createSong,
@@ -93,11 +94,9 @@ io.use((socket, next) => {
 	next(); // Allow other connections
 });
 
-const DEFAULT_USERNAME = 'New user';
-
 io.on('connection', (socket) => {
 	const userId = socket.id;
-	connectedUsers.push({ id: userId, username: DEFAULT_USERNAME });
+	connectedUsers.push({ id: userId, username: uniqueNamesGenerator({ dictionaries: [names] }) });
 
 	io.emit('users', connectedUsers);
 	socket.emit('player-state', playerState);

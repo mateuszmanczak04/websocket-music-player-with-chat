@@ -6,12 +6,10 @@ import { socket } from '../utils/socket';
 import { Song, T_PlayerState } from '../utils/types';
 
 type T_Props = {
-	isConnected: boolean;
 	users: string[];
 	playerState: T_PlayerState;
 	socket: typeof socket;
 	songs: Song[];
-	setSongs: React.Dispatch<React.SetStateAction<Song[]>>;
 	currentSong?: Song;
 };
 
@@ -30,7 +28,6 @@ interface SocketProviderProps {
 }
 
 export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
-	const [isConnected, setIsConnected] = useState(false);
 	const [users, setUsers] = useState<string[]>([]);
 	const [playerState, setPlayerState] = useState<T_PlayerState>({
 		currentSongId: '',
@@ -52,13 +49,6 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		socket.on('connect', () => {
-			setIsConnected(true);
-		});
-		socket.on('disconnect', () => {
-			setIsConnected(false);
-		});
-
 		socket.on('users', (users: string[]) => {
 			setUsers(users);
 		});
@@ -88,12 +78,10 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	return (
 		<AppContext.Provider
 			value={{
-				isConnected,
 				users,
 				playerState,
 				socket,
 				songs,
-				setSongs,
 				currentSong,
 			}}>
 			{children}

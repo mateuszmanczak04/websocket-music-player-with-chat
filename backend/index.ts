@@ -12,6 +12,7 @@ import {
 	getSongById,
 	updateSong,
 } from './controllers/songController';
+import { streamAudio } from './controllers/streamingController';
 
 const app = express();
 const server = http.createServer(app);
@@ -50,6 +51,7 @@ app.post(
 );
 app.put('/songs/:id', updateSong);
 app.delete('/songs/:id', deleteSong);
+app.get('/audio/:id', streamAudio);
 
 app.get('/', (req: Request, res: Response) => {
 	res.send('Hello, world!');

@@ -125,7 +125,7 @@ const Player = () => {
 					onChange={handleProgressChange}
 				/>
 			</div>
-			<audio ref={audioRef} src={`${API_URL}/${currentSong.audio}`} />
+			<audio ref={audioRef} src={`${API_URL}/audio/${currentSong.id}`} />
 		</article>
 	);
 };

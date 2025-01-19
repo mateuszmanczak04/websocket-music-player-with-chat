@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
 import multer from 'multer';
+import { nanoid } from 'nanoid';
 import { Server } from 'socket.io';
 import {
 	createSong,
@@ -69,7 +70,14 @@ type T_User = {
 	username: string;
 };
 
+type T_Message = {
+	id: string;
+	content: string;
+	userId: string;
+};
+
 const connectedUsers = new Array<T_User>();
+const messages = new Array<T_Message>();
 const playerState = {
 	currentSongId: '',
 	currentProgress: 0,
@@ -127,6 +135,12 @@ io.on('connection', (socket) => {
 			user.username = username;
 		}
 		io.emit('users', connectedUsers);
+	});
+
+	socket.on('send-message', (content: string) => {
+		const message = { content, userId, id: nanoid() };
+		messages.push(message);
+		io.emit('messages', messages);
 	});
 });
 

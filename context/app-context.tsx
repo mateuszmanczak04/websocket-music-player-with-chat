@@ -1,25 +1,21 @@
 'use client';
 
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { API_URL } from '../utils/api';
 import { socket } from '../utils/socket';
-import { Song, T_PlayerState } from '../utils/types';
+import { T_Message, T_PlayerState, T_Song, T_User } from '../utils/types';
 
-type T_User = {
-	id: string;
-	username: string;
-};
-
-type T_Props = {
+type T_ContextProps = {
 	users: T_User[];
 	user?: T_User;
 	playerState: T_PlayerState;
 	socket: typeof socket;
-	songs: Song[];
-	currentSong?: Song;
+	songs: T_Song[];
+	messages: T_Message[];
+	currentSong?: T_Song;
 };
 
-const AppContext = createContext<T_Props | undefined>(undefined);
+const AppContext = createContext<T_ContextProps | undefined>(undefined);
 
 export const useAppContext = () => {
 	const context = useContext(AppContext);
@@ -29,18 +25,19 @@ export const useAppContext = () => {
 	return context;
 };
 
-interface SocketProviderProps {
+type T_ProviderProps = {
 	children: ReactNode;
-}
+};
 
-export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
+export const AppProvider = ({ children }: T_ProviderProps) => {
 	const [users, setUsers] = useState<T_User[]>([]);
+	const [messages, setMessages] = useState<T_Message[]>([]);
 	const [playerState, setPlayerState] = useState<T_PlayerState>({
 		currentSongId: '',
 		currentProgress: 0,
 		isPlaying: false,
 	});
-	const [songs, setSongs] = useState<Song[]>([]);
+	const [songs, setSongs] = useState<T_Song[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
 	// Load songs from the API on the page load
@@ -67,11 +64,17 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 			setSongs(songs);
 		});
 
+		socket.on('messages', (messages) => {
+			setMessages(messages);
+		});
+
 		return () => {
 			socket.off('connect');
 			socket.off('disconnect');
 			socket.off('users');
 			socket.off('player-state');
+			socket.off('songs');
+			socket.off('messages');
 		};
 	}, []);
 
@@ -90,6 +93,7 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 				playerState,
 				socket,
 				songs,
+				messages,
 				currentSong,
 			}}>
 			{children}

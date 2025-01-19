@@ -1,4 +1,4 @@
-export type Song = {
+export type T_Song = {
 	id: string;
 	title: string;
 	cover: string;
@@ -11,4 +11,15 @@ export type T_PlayerState = {
 	currentSongId: string;
 	currentProgress: number;
 	isPlaying: boolean;
+};
+
+export type T_User = {
+	id: string;
+	username: string;
+};
+
+export type T_Message = {
+	id: string;
+	content: string;
+	userId: string;
 };

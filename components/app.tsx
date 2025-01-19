@@ -1,5 +1,6 @@
 'use client';
 
+import Chat from './chat';
 import ConnectedUsers from './connected-users';
 import Player from './player';
 import TrackList from './track-list';
@@ -17,6 +18,9 @@ const App = () => {
 				<ConnectedUsers />
 				<Player />
 			</main>
+			<aside className='shrink-0 grow-0 basis-96 bg-neutral-100 p-8'>
+				<Chat />
+			</aside>
 		</div>
 	);
 };

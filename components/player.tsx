@@ -31,10 +31,9 @@ const Player = () => {
 
 		socket.emit('set-player-state', {
 			currentSongId: currentSong.id,
-			currentProgress: progress,
 			isPlaying: !isPlaying,
 		});
-	}, [progress, socket, currentSong, isPlaying]);
+	}, [socket, currentSong, isPlaying]);
 
 	// When user clicks on progress bar
 	const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {

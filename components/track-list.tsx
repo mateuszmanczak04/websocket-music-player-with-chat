@@ -11,6 +11,8 @@ const TrackList = () => {
 	const handleChooseSong = (songId: string) => {
 		socket.emit('set-player-state', {
 			currentSongId: songId,
+			currentProgress: 0,
+			isPlaying: false,
 		});
 	};
 

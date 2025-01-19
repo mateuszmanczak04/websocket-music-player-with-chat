@@ -13,6 +13,7 @@ type T_ContextProps = {
 	songs: T_Song[];
 	messages: T_Message[];
 	currentSong?: T_Song;
+	groupKey: string;
 };
 
 const AppContext = createContext<T_ContextProps | undefined>(undefined);
@@ -39,6 +40,7 @@ export const AppProvider = ({ children }: T_ProviderProps) => {
 	});
 	const [songs, setSongs] = useState<T_Song[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [groupKey, setGroupKey] = useState('');
 
 	// Load songs and messages from the API on the page load
 	useEffect(() => {
@@ -73,6 +75,10 @@ export const AppProvider = ({ children }: T_ProviderProps) => {
 			setMessages((prev) => [...prev, message]);
 		});
 
+		socket.on('group-key', (key: string) => {
+			setGroupKey(key);
+		});
+
 		return () => {
 			socket.off('connect');
 			socket.off('disconnect');
@@ -100,6 +106,7 @@ export const AppProvider = ({ children }: T_ProviderProps) => {
 				songs,
 				messages,
 				currentSong,
+				groupKey,
 			}}>
 			{children}
 		</AppContext.Provider>

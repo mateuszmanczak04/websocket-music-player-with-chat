@@ -1,5 +1,6 @@
 import type { Song } from '@prisma/client';
 import cors from 'cors';
+import crypto from 'crypto';
 import type { Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
@@ -78,6 +79,7 @@ const playerState = {
 	currentProgress: 0,
 	isPlaying: false,
 };
+const groupKey = crypto.randomBytes(32).toString('hex');
 
 // Needed to fix a bug with the 'node-XMLHttpRequest' user-agent
 io.use((socket, next) => {
@@ -99,6 +101,7 @@ io.on('connection', (socket) => {
 
 	io.emit('users', connectedUsers);
 	socket.emit('player-state', playerState);
+	socket.emit('group-key', groupKey);
 
 	socket.on('disconnect', () => {
 		connectedUsers.splice(
@@ -132,8 +135,10 @@ io.on('connection', (socket) => {
 		io.emit('users', connectedUsers);
 	});
 
-	socket.on('send-message', async (content: string, username: string) => {
-		const newMessage = await db.message.create({ data: { content, username } });
+	socket.on('send-message', async (encryptedMessageContent: string, username: string) => {
+		const newMessage = await db.message.create({
+			data: { content: encryptedMessageContent, username },
+		});
 		io.emit('message', newMessage);
 	});
 });

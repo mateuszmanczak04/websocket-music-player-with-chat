@@ -2,9 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import { useAppContext } from '../context/app-context';
+import { decryptMessage, encryptMessage } from '../utils/encryption';
 
 const Chat = () => {
-	const { messages, socket, user } = useAppContext();
+	const { messages, socket, user, groupKey } = useAppContext();
 	const messagesRef = useRef<HTMLDivElement>(null!);
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -13,7 +14,7 @@ const Chat = () => {
 		const formData = new FormData(e.target as HTMLFormElement);
 		const message = formData.get('message') as string;
 		if (!message) return;
-		socket.emit('send-message', message, user.username);
+		socket.emit('send-message', encryptMessage(message, groupKey), user.username);
 		(e.target as HTMLFormElement).reset();
 	};
 
@@ -40,7 +41,7 @@ const Chat = () => {
 							color: message.username === user?.username ? 'white' : '#262626',
 						}}>
 						<p>{message.username}</p>
-						<p className='font-bold'>{message.content}</p>
+						<p className='font-bold'>{decryptMessage(message.content, groupKey)}</p>
 					</div>
 				))}
 			</div>

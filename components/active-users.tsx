@@ -2,11 +2,11 @@
 
 import { useAppContext } from '../context/app-context';
 
-const ConnectedUsers = () => {
+const ActiveUsers = () => {
 	const { users, user } = useAppContext();
 
 	return (
-		<ul className='mt-4 flex flex-wrap gap-x-2 border-b border-neutral-300 pb-4'>
+		<ul className='mt-2 flex flex-wrap gap-x-2 border-b border-neutral-300 pb-4'>
 			{users.map((u) => (
 				<li
 					key={u.id}
@@ -20,4 +20,4 @@ const ConnectedUsers = () => {
 	);
 };
 
-export default ConnectedUsers;
+export default ActiveUsers;

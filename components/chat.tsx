@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useAppContext } from '../context/app-context';
 import { decryptMessage, encryptMessage } from '../utils/encryption';
-import ConnectedUsers from './connected-users';
+import ActiveUsers from './active-users';
 
 const Chat = () => {
 	const { messages, socket, user, groupKey, users } = useAppContext();
@@ -45,7 +45,7 @@ const Chat = () => {
 	return (
 		<div className='flex h-full flex-col rounded-xl bg-white p-6'>
 			<h2 className='text-lg font-bold'>Chat</h2>
-			<ConnectedUsers />
+			<ActiveUsers />
 			<div
 				className='mt-4 flex flex-1 flex-col gap-2 overflow-y-auto scroll-smooth'
 				ref={messagesRef}>

@@ -8,9 +8,9 @@ import { API_URL } from '../utils/api';
 
 const Player = () => {
 	const [isPlaying, setIsPlaying] = useState(false);
-	const [progress, setProgress] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null!);
 	const { playerState, socket, currentSong, songs } = useAppContext();
+	const [localProgress, setLocalProgress] = useState(playerState.currentProgress);
 
 	const handleDeleteSong = async () => {
 		if (!currentSong) return;
@@ -27,57 +27,28 @@ const Player = () => {
 
 	// When user clicks on play/pause button
 	const togglePlay = useCallback(() => {
-		if (!audioRef.current || !currentSong) return;
+		if (!currentSong) return;
 
 		socket.emit('set-player-state', {
-			currentSongId: currentSong.id,
 			isPlaying: !isPlaying,
 		});
 	}, [socket, currentSong, isPlaying]);
 
 	// When user clicks on progress bar
 	const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (!audioRef.current) return;
-
-		const newProgress = Number(event.target.value);
 		socket.emit('set-player-state', {
-			currentProgress: newProgress,
+			currentProgress: Number(event.target.value),
 		});
 	};
 
-	// Synchronize progress state with audio element
-	useEffect(() => {
-		const handleTimeUpdate = () => {
-			if (audioRef.current) {
-				const currentTime = audioRef.current.currentTime;
-				const duration = audioRef.current.duration;
-				setProgress((currentTime / duration) * 100);
-			}
-		};
-
-		const audioElement = audioRef.current;
-		if (audioElement) {
-			audioElement.addEventListener('timeupdate', handleTimeUpdate);
-		}
-		return () => {
-			if (audioElement) {
-				audioElement.removeEventListener('timeupdate', handleTimeUpdate);
-			}
-		};
-	}, []);
-
-	// A listener for event from websocket
+	// Listen for updates from the server
 	useEffect(() => {
 		if (!navigator.userActivation.hasBeenActive) return;
 
 		setIsPlaying(playerState.isPlaying);
-		setProgress(playerState.currentProgress);
+		setLocalProgress(playerState.currentProgress);
 
-		if (audioRef.current.duration) {
-			audioRef.current.currentTime =
-				(playerState.currentProgress / 100) * audioRef.current.duration;
-		}
-
+		audioRef.current.currentTime = playerState.currentProgress;
 		if (playerState.isPlaying) {
 			audioRef.current.play();
 		} else {
@@ -119,12 +90,16 @@ const Player = () => {
 					className='mt-4 w-full'
 					type='range'
 					min='0'
-					max='100'
-					value={progress || 0}
+					max={audioRef.current?.duration || 0}
+					value={localProgress}
 					onChange={handleProgressChange}
 				/>
 			</div>
-			<audio ref={audioRef} src={`${API_URL}/audio/${currentSong.id}`} />
+			<audio
+				ref={audioRef}
+				src={`${API_URL}/audio/${currentSong.id}`}
+				onTimeUpdate={() => setLocalProgress(audioRef.current.currentTime)}
+			/>
 		</article>
 	);
 };

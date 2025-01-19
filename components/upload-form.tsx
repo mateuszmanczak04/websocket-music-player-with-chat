@@ -3,14 +3,13 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/app-context';
 import { API_URL } from '../utils/api';
-import { Song } from '../utils/types';
 
 const UploadForm = () => {
 	const [title, setTitle] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
-	const { addSong } = useAppContext();
+	const { songs, socket } = useAppContext();
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
@@ -26,10 +25,10 @@ const UploadForm = () => {
 		})
 			.then((res) => res.json())
 			.then((response) => {
-				addSong(response as unknown as Song);
 				setTitle('');
 				setMessage('Song added to library');
 				(event.target as HTMLFormElement).reset();
+				socket.emit('set-songs', [response, ...songs]);
 			})
 			.catch(() => {
 				setError('Failed to add song');

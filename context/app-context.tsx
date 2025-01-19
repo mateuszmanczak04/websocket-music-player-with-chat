@@ -10,9 +10,8 @@ type T_Props = {
 	users: string[];
 	playerState: T_PlayerState;
 	socket: typeof socket;
-	addSong: (song: Song) => void;
-	deleteSong: (id: string) => void;
 	songs: Song[];
+	setSongs: React.Dispatch<React.SetStateAction<Song[]>>;
 	currentSong?: Song;
 };
 
@@ -40,14 +39,6 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	});
 	const [songs, setSongs] = useState<Song[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-
-	const addSong = (song: Song) => {
-		setSongs((prev) => [song, ...prev]);
-	};
-
-	const deleteSong = async (id: string) => {
-		setSongs((prev) => prev.filter((song) => song.id !== id));
-	};
 
 	// Load songs from the API on the page load
 	useEffect(() => {
@@ -77,7 +68,7 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 		});
 
 		socket.on('songs', (songs) => {
-			console.log(songs);
+			setSongs(songs);
 		});
 
 		return () => {
@@ -101,9 +92,8 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 				users,
 				playerState,
 				socket,
-				addSong,
-				deleteSong,
 				songs,
+				setSongs,
 				currentSong,
 			}}>
 			{children}

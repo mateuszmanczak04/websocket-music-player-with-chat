@@ -10,7 +10,7 @@ const Player = () => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null!);
-	const { playerState, socket, currentSong, deleteSong } = useAppContext();
+	const { playerState, socket, currentSong, songs } = useAppContext();
 
 	const handleDeleteSong = async () => {
 		if (!currentSong) return;
@@ -18,7 +18,10 @@ const Player = () => {
 			method: 'DELETE',
 		});
 		if (response.ok) {
-			deleteSong(currentSong.id);
+			socket.emit(
+				'set-songs',
+				songs.filter((song) => song.id !== currentSong.id),
+			);
 		}
 	};
 

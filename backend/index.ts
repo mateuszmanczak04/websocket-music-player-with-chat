@@ -4,7 +4,6 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
 import multer from 'multer';
-import { nanoid } from 'nanoid';
 import { Server } from 'socket.io';
 import { getMessages } from './controllers/messageController';
 import {
@@ -73,14 +72,7 @@ type T_User = {
 	username: string;
 };
 
-type T_Message = {
-	id: string;
-	content: string;
-	username: string;
-};
-
 const connectedUsers = new Array<T_User>();
-const messages = new Array<T_Message>();
 const playerState = {
 	currentSongId: '',
 	currentProgress: 0,
@@ -141,10 +133,8 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('send-message', async (content: string, username: string) => {
-		const message = { content, username, id: nanoid() };
-		messages.push(message);
-		await db.message.create({ data: { content, username } });
-		io.emit('messages', messages);
+		const newMessage = await db.message.create({ data: { content, username } });
+		io.emit('message', newMessage);
 	});
 });
 

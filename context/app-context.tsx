@@ -69,8 +69,8 @@ export const AppProvider = ({ children }: T_ProviderProps) => {
 			setSongs(songs);
 		});
 
-		socket.on('messages', (messages) => {
-			setMessages(messages);
+		socket.on('message', (message) => {
+			setMessages((prev) => [...prev, message]);
 		});
 
 		return () => {

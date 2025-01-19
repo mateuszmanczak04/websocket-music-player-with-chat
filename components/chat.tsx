@@ -59,7 +59,7 @@ const Chat = () => {
 			<h2 className='text-lg font-bold'>Chat</h2>
 			<ActiveUsers />
 			<div
-				className='mt-4 flex flex-1 flex-col gap-2 overflow-y-auto scroll-smooth'
+				className='scrollbar-hide mt-4 flex flex-1 flex-col gap-2 overflow-y-auto scroll-smooth'
 				ref={messagesRef}>
 				{messages.map((message) => (
 					<div
@@ -67,7 +67,7 @@ const Chat = () => {
 						className={cn(
 							'w-3/4 rounded-xl bg-neutral-100 px-3 py-2',
 							message.username === '[SERVER]' &&
-								'flex w-full gap-2 bg-transparent text-center text-sm',
+								'mx-auto flex w-fit gap-2 bg-transparent text-center text-sm',
 							message.username === user?.username &&
 								'self-end bg-blue-500 text-white',
 						)}>
@@ -77,15 +77,13 @@ const Chat = () => {
 				))}
 			</div>
 
-			<form
-				onSubmit={handleSubmit}
-				className='mt-4 flex gap-2 rounded-xl border border-neutral-300 p-2'>
+			<form onSubmit={handleSubmit} className='flex gap-2'>
 				<input
 					required
 					type='text'
 					name='message'
 					placeholder='Your message'
-					className='rounded-lg border border-neutral-300 px-3 py-2'
+					className='flex-1 rounded-lg border border-neutral-300 px-3 py-2'
 				/>
 				<button className='rounded-lg bg-blue-500 px-4 py-2 text-white'>Send</button>
 			</form>

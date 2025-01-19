@@ -17,7 +17,7 @@ const TrackList = () => {
 	};
 
 	return (
-		<div className='mt-4 flex flex-1 flex-col gap-4 overflow-y-scroll rounded-xl bg-white p-6'>
+		<div className='scrollbar-hide mt-4 flex flex-1 flex-col gap-4 overflow-y-scroll rounded-xl bg-white p-6'>
 			<h2 className='mx-2 text-xl font-bold'>Songs</h2>
 			{songs.length === 0 && <p>No songs available</p>}
 			{songs.map((song) => (

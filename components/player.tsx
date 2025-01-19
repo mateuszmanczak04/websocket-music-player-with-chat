@@ -59,20 +59,23 @@ const Player = () => {
 	if (!currentSong) return <p className='mt-4'>No song selected</p>;
 
 	return (
-		<article className='group mt-4 flex max-w-md flex-col rounded-xl bg-neutral-100 p-6'>
-			<div className='relative'>
+		<main className='group flex h-full min-w-96 flex-1 flex-col rounded-xl p-6'>
+			<div className='relative mb-4 grid flex-1 place-content-center rounded-xl bg-neutral-100'>
 				<Image
 					src={`${API_URL}/${currentSong.cover}`}
 					alt={currentSong.title}
 					width={200}
 					height={200}
-					className='w-full rounded-xl'
+					className='w-full max-w-lg'
 				/>
-				<h2 className='absolute inset-x-0 bottom-0 rounded-b-xl bg-gradient-to-b from-transparent via-black/30 to-black/40 p-2 pt-8 text-center text-xl font-semibold text-white'>
+
+				<h2 className='absolute inset-x-0 bottom-0 rounded-b-xl bg-gradient-to-b from-transparent via-black/15 to-black/40 p-4 pt-32 text-center text-xl font-semibold text-white'>
 					{currentSong.title}
 				</h2>
 			</div>
-			<div className='mt-4 rounded-xl bg-white p-6'>
+
+			{/* Controls */}
+			<div className='mx-auto mt-auto w-full max-w-xl rounded-xl p-6'>
 				<div className='flex justify-center gap-2'>
 					<button
 						className='grid size-12 cursor-pointer place-content-center rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
@@ -100,7 +103,7 @@ const Player = () => {
 				src={`${API_URL}/audio/${currentSong.id}`}
 				onTimeUpdate={() => setLocalProgress(audioRef.current.currentTime)}
 			/>
-		</article>
+		</main>
 	);
 };
 

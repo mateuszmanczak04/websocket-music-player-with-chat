@@ -96,7 +96,6 @@ io.use((socket, next) => {
 });
 
 const triggerUserActivity = (userId: string) => {
-	console.log('User activity triggered');
 	const user = connectedUsers.find((user) => user.id === userId);
 	if (user) {
 		user.lastActive = new Date();

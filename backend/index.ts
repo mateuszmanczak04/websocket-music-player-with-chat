@@ -6,6 +6,7 @@ import http from 'http';
 import multer from 'multer';
 import { nanoid } from 'nanoid';
 import { Server } from 'socket.io';
+import { getMessages } from './controllers/messageController';
 import {
 	createSong,
 	deleteSong,
@@ -14,6 +15,7 @@ import {
 	updateSong,
 } from './controllers/songController';
 import { streamAudio } from './controllers/streamingController';
+import db from './prisma/database';
 
 const app = express();
 const server = http.createServer(app);
@@ -53,6 +55,7 @@ app.post(
 app.put('/songs/:id', updateSong);
 app.delete('/songs/:id', deleteSong);
 app.get('/audio/:id', streamAudio);
+app.get('/messages', getMessages);
 
 app.get('/', (req: Request, res: Response) => {
 	res.send('Hello, world!');
@@ -137,9 +140,10 @@ io.on('connection', (socket) => {
 		io.emit('users', connectedUsers);
 	});
 
-	socket.on('send-message', (content: string) => {
+	socket.on('send-message', async (content: string) => {
 		const message = { content, userId, id: nanoid() };
 		messages.push(message);
+		await db.message.create({ data: { content, userId } });
 		io.emit('messages', messages);
 	});
 });

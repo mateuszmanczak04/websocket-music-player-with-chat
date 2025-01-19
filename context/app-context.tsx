@@ -40,12 +40,18 @@ export const AppProvider = ({ children }: T_ProviderProps) => {
 	const [songs, setSongs] = useState<T_Song[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
-	// Load songs from the API on the page load
+	// Load songs and messages from the API on the page load
 	useEffect(() => {
 		fetch(`${API_URL}/songs`)
 			.then((res) => res.json())
 			.then((data) => {
 				setSongs(data);
+			})
+			.then(() => fetch(`${API_URL}/messages`))
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data);
+				setMessages(data);
 			})
 			.catch((err) => console.error(err))
 			.finally(() => setIsLoading(false));

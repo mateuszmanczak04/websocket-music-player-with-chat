@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useAppContext } from '../context/app-context';
 
 const Chat = () => {
 	const { messages, socket, user } = useAppContext();
+	const messagesRef = useRef<HTMLDivElement>(null!);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		if (!user) return;
@@ -15,10 +17,17 @@ const Chat = () => {
 		(e.target as HTMLFormElement).reset();
 	};
 
+	useEffect(() => {
+		if (!messagesRef.current) return;
+		messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+	}, [messages]);
+
 	return (
 		<div className='flex h-full flex-col rounded-xl bg-white p-6'>
 			<h2 className='text-lg font-bold'>Chat</h2>
-			<div className='mt-4 flex flex-1 flex-col gap-2 overflow-y-auto'>
+			<div
+				className='mt-4 flex flex-1 flex-col gap-2 overflow-y-auto scroll-smooth'
+				ref={messagesRef}>
 				{messages.map((message) => (
 					<div
 						key={message.id}

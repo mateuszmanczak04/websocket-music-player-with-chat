@@ -126,13 +126,14 @@ io.on('connection', (socket) => {
 		io.emit('player-state', playerState);
 	});
 
-	socket.on('set-username', (username: string) => {
-		const user = connectedUsers.find((user) => user.id === userId);
-		if (user) {
-			user.username = username;
-		}
-		io.emit('users', connectedUsers);
-	});
+	// Feature disabled
+	// socket.on('set-username', (username: string) => {
+	// 	const user = connectedUsers.find((user) => user.id === userId);
+	// 	if (user) {
+	// 		user.username = username;
+	// 	}
+	// 	io.emit('users', connectedUsers);
+	// });
 
 	socket.on('send-message', async (encryptedMessageContent: string, username: string) => {
 		const newMessage = await db.message.create({

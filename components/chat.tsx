@@ -32,6 +32,17 @@ const Chat = () => {
 					'[SERVER]',
 				);
 			}
+		} else if (previousUsers.current.length > users.length) {
+			const leftUser = previousUsers.current.find(
+				(u) => !users.map((u) => u.id).includes(u.id),
+			);
+			if (leftUser) {
+				socket.emit(
+					'send-message',
+					encryptMessage(`${leftUser.username} left the chat`, groupKey),
+					'[SERVER]',
+				);
+			}
 		}
 
 		previousUsers.current = users;

@@ -18,7 +18,7 @@ const Chat = () => {
 	return (
 		<div className='flex h-full flex-col rounded-xl bg-white p-6'>
 			<h2 className='text-lg font-bold'>Chat</h2>
-			<div className='mt-4 flex flex-1 flex-col gap-2'>
+			<div className='mt-4 flex flex-1 flex-col gap-2 overflow-y-auto'>
 				{messages.map((message) => (
 					<div
 						key={message.id}

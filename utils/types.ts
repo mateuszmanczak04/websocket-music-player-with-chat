@@ -16,6 +16,7 @@ export type T_PlayerState = {
 export type T_User = {
 	id: string;
 	username: string;
+	lastActive: Date;
 };
 
 export type T_Message = {

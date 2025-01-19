@@ -72,6 +72,7 @@ const io = new Server(server, {
 type T_User = {
 	id: string;
 	username: string;
+	lastActive: Date;
 };
 
 const connectedUsers = new Array<T_User>();
@@ -94,9 +95,22 @@ io.use((socket, next) => {
 	next(); // Allow other connections
 });
 
+const triggerUserActivity = (userId: string) => {
+	console.log('User activity triggered');
+	const user = connectedUsers.find((user) => user.id === userId);
+	if (user) {
+		user.lastActive = new Date();
+	}
+	io.emit('users', connectedUsers);
+};
+
 io.on('connection', (socket) => {
 	const userId = socket.id;
-	connectedUsers.push({ id: userId, username: uniqueNamesGenerator({ dictionaries: [names] }) });
+	connectedUsers.push({
+		id: userId,
+		lastActive: new Date(),
+		username: uniqueNamesGenerator({ dictionaries: [names] }),
+	});
 
 	io.emit('users', connectedUsers);
 	socket.emit('player-state', playerState);
@@ -111,10 +125,12 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('set-songs', (songs: Song[]) => {
+		triggerUserActivity(userId);
 		io.emit('songs', songs);
 	});
 
 	socket.on('set-player-state', (state) => {
+		triggerUserActivity(userId);
 		playerState.isPlaying =
 			state.isPlaying !== undefined ? state.isPlaying : playerState.isPlaying;
 		playerState.currentProgress =
@@ -136,6 +152,7 @@ io.on('connection', (socket) => {
 	// });
 
 	socket.on('send-message', async (encryptedMessageContent: string, username: string) => {
+		triggerUserActivity(userId);
 		const newMessage = await db.message.create({
 			data: { content: encryptedMessageContent, username },
 		});

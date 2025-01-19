@@ -64,7 +64,12 @@ const io = new Server(server, {
 	},
 });
 
-const connectedUsers = new Set<string>();
+type T_User = {
+	id: string;
+	username: string;
+};
+
+const connectedUsers = new Array<T_User>();
 const playerState = {
 	currentSongId: '',
 	currentProgress: 0,
@@ -83,16 +88,21 @@ io.use((socket, next) => {
 	next(); // Allow other connections
 });
 
+const DEFAULT_USERNAME = 'New user';
+
 io.on('connection', (socket) => {
 	const userId = socket.id;
-	connectedUsers.add(userId);
+	connectedUsers.push({ id: userId, username: DEFAULT_USERNAME });
 
-	io.emit('users', Array.from(connectedUsers));
+	io.emit('users', connectedUsers);
 	socket.emit('player-state', playerState);
 
 	socket.on('disconnect', () => {
-		connectedUsers.delete(userId);
-		io.emit('users', Array.from(connectedUsers));
+		connectedUsers.splice(
+			connectedUsers.findIndex((user) => user.id === userId),
+			1,
+		);
+		io.emit('users', connectedUsers);
 	});
 
 	socket.on('set-songs', (songs: Song[]) => {
@@ -109,6 +119,14 @@ io.on('connection', (socket) => {
 		playerState.currentSongId =
 			state.currentSongId !== undefined ? state.currentSongId : playerState.currentSongId;
 		io.emit('player-state', playerState);
+	});
+
+	socket.on('set-username', (username: string) => {
+		const user = connectedUsers.find((user) => user.id === userId);
+		if (user) {
+			user.username = username;
+		}
+		io.emit('users', connectedUsers);
 	});
 });
 

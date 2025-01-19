@@ -5,8 +5,14 @@ import { API_URL } from '../utils/api';
 import { socket } from '../utils/socket';
 import { Song, T_PlayerState } from '../utils/types';
 
+type T_User = {
+	id: string;
+	username: string;
+};
+
 type T_Props = {
-	users: string[];
+	users: T_User[];
+	user?: T_User;
 	playerState: T_PlayerState;
 	socket: typeof socket;
 	songs: Song[];
@@ -28,7 +34,7 @@ interface SocketProviderProps {
 }
 
 export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
-	const [users, setUsers] = useState<string[]>([]);
+	const [users, setUsers] = useState<T_User[]>([]);
 	const [playerState, setPlayerState] = useState<T_PlayerState>({
 		currentSongId: '',
 		currentProgress: 0,
@@ -49,7 +55,7 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		socket.on('users', (users: string[]) => {
+		socket.on('users', (users: T_User[]) => {
 			setUsers(users);
 		});
 
@@ -74,11 +80,13 @@ export const AppProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	}
 
 	const currentSong = songs.find((song) => song.id === playerState.currentSongId);
+	const user = users.find((user) => user.id === socket.id);
 
 	return (
 		<AppContext.Provider
 			value={{
 				users,
+				user,
 				playerState,
 				socket,
 				songs,

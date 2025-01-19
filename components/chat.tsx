@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useAppContext } from '../context/app-context';
+import { cn } from '../utils/cn';
 import { decryptMessage, encryptMessage } from '../utils/encryption';
 import ActiveUsers from './active-users';
 
@@ -63,27 +64,13 @@ const Chat = () => {
 				{messages.map((message) => (
 					<div
 						key={message.id}
-						className='w-3/4 rounded-xl px-3 py-2'
-						style={{
-							alignSelf:
-								message.username === user?.username ? 'flex-end' : 'flex-start',
-							backgroundColor: (() => {
-								switch (message.username) {
-									case '[SERVER]':
-										return 'transparent';
-									case user?.username:
-										return '#3b82f6';
-									default:
-										return '#f5f5f5';
-								}
-							})(),
-							color: message.username === user?.username ? 'white' : '#262626',
-							width: message.username === '[SERVER]' ? '100%' : 'fit-content',
-							fontSize: message.username === '[SERVER]' ? '0.8rem' : '1rem',
-							textAlign: message.username === '[SERVER]' ? 'center' : 'left',
-							display: message.username === '[SERVER]' ? 'flex' : 'block',
-							gap: message.username === '[SERVER]' ? '0.5rem' : '0',
-						}}>
+						className={cn(
+							'w-3/4 rounded-xl bg-neutral-100 px-3 py-2',
+							message.username === '[SERVER]' &&
+								'flex w-full gap-2 bg-transparent text-center text-sm',
+							message.username === user?.username &&
+								'self-end bg-blue-500 text-white',
+						)}>
 						<p>{message.username}</p>
 						<p className='font-bold'>{decryptMessage(message.content, groupKey)}</p>
 					</div>

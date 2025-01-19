@@ -76,7 +76,7 @@ type T_User = {
 type T_Message = {
 	id: string;
 	content: string;
-	userId: string;
+	username: string;
 };
 
 const connectedUsers = new Array<T_User>();
@@ -140,10 +140,10 @@ io.on('connection', (socket) => {
 		io.emit('users', connectedUsers);
 	});
 
-	socket.on('send-message', async (content: string) => {
-		const message = { content, userId, id: nanoid() };
+	socket.on('send-message', async (content: string, username: string) => {
+		const message = { content, username, id: nanoid() };
 		messages.push(message);
-		await db.message.create({ data: { content, userId } });
+		await db.message.create({ data: { content, username } });
 		io.emit('messages', messages);
 	});
 });

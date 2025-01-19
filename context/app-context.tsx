@@ -50,7 +50,6 @@ export const AppProvider = ({ children }: T_ProviderProps) => {
 			.then(() => fetch(`${API_URL}/messages`))
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setMessages(data);
 			})
 			.catch((err) => console.error(err))

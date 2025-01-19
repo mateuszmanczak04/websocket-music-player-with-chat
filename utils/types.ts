@@ -21,5 +21,5 @@ export type T_User = {
 export type T_Message = {
 	id: string;
 	content: string;
-	userId: string;
+	username: string;
 };

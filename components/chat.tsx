@@ -3,14 +3,15 @@
 import { useAppContext } from '../context/app-context';
 
 const Chat = () => {
-	const { messages, socket, users } = useAppContext();
+	const { messages, socket, user } = useAppContext();
 
 	const handleSubmit = (e: React.FormEvent) => {
+		if (!user) return;
 		e.preventDefault();
 		const formData = new FormData(e.target as HTMLFormElement);
 		const message = formData.get('message') as string;
 		if (!message) return;
-		socket.emit('send-message', message);
+		socket.emit('send-message', message, user.username);
 		(e.target as HTMLFormElement).reset();
 	};
 
@@ -23,11 +24,13 @@ const Chat = () => {
 						key={message.id}
 						className='w-3/4 rounded-xl px-3 py-2'
 						style={{
-							alignSelf: message.userId === socket.id ? 'flex-end' : 'flex-start',
-							backgroundColor: message.userId === socket.id ? '#3b82f6' : '#f5f5f5',
-							color: message.userId === socket.id ? 'white' : '#262626',
+							alignSelf:
+								message.username === user?.username ? 'flex-end' : 'flex-start',
+							backgroundColor:
+								message.username === user?.username ? '#3b82f6' : '#f5f5f5',
+							color: message.username === user?.username ? 'white' : '#262626',
 						}}>
-						<p>{users.find((u) => u.id === message.userId)?.username}</p>
+						<p>{message.username}</p>
 						<p className='font-bold'>{message.content}</p>
 					</div>
 				))}

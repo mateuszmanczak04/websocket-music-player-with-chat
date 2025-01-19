@@ -2,16 +2,11 @@
 
 import { Play } from 'lucide-react';
 import Image from 'next/image';
-import { useSocket } from '../context/socket-context';
+import { useAppContext } from '../context/app-context';
 import { API_URL } from '../utils/api';
-import { Song } from '../utils/types';
 
-type T_Props = {
-	songs: Song[];
-};
-
-const TrackList = ({ songs }: T_Props) => {
-	const { socket } = useSocket();
+const TrackList = () => {
+	const { socket, songs } = useAppContext();
 
 	const handleChooseSong = (songId: string) => {
 		socket.emit('set-player-state', {

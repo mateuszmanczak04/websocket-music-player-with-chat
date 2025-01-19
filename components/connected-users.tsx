@@ -1,9 +1,9 @@
 'use client';
 
-import { useSocket } from '../context/socket-context';
+import { useAppContext } from '../context/app-context';
 
 const ConnectedUsers = () => {
-	const { users } = useSocket();
+	const { users } = useAppContext();
 
 	return (
 		<div className='mt-4 rounded-xl bg-neutral-100 p-6'>

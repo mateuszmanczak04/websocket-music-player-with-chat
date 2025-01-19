@@ -3,40 +3,35 @@
 import { Pause, Play, Trash } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSocket } from '../context/socket-context';
+import { useAppContext } from '../context/app-context';
 import { API_URL } from '../utils/api';
-import { Song } from '../utils/types';
 
-type T_Props = {
-	song: Song;
-	deleteSong: (id: string) => void;
-};
-
-const Player = ({ song, deleteSong }: T_Props) => {
+const Player = () => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null!);
-	const { playerState, socket } = useSocket();
+	const { playerState, socket, currentSong, deleteSong } = useAppContext();
 
 	const handleDeleteSong = async () => {
-		const response = await fetch(`${API_URL}/songs/${song.id}`, {
+		if (!currentSong) return;
+		const response = await fetch(`${API_URL}/songs/${currentSong.id}`, {
 			method: 'DELETE',
 		});
 		if (response.ok) {
-			deleteSong(song.id);
+			deleteSong(currentSong.id);
 		}
 	};
 
 	// When user clicks on play/pause button
 	const togglePlay = useCallback(() => {
-		if (!audioRef.current) return;
+		if (!audioRef.current || !currentSong) return;
 
 		socket.emit('set-player-state', {
-			currentSongId: song.id,
+			currentSongId: currentSong.id,
 			currentProgress: progress,
 			isPlaying: !isPlaying,
 		});
-	}, [progress, socket, song.id, isPlaying]);
+	}, [progress, socket, currentSong, isPlaying]);
 
 	// When user clicks on progress bar
 	const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,20 +83,20 @@ const Player = ({ song, deleteSong }: T_Props) => {
 		}
 	}, [playerState]);
 
-	console.table(playerState);
+	if (!currentSong) return <p className='mt-4'>No song selected</p>;
 
 	return (
 		<article className='group mt-4 flex max-w-md flex-col rounded-xl bg-neutral-100 p-6'>
 			<div className='relative'>
 				<Image
-					src={`${API_URL}/${song.cover}`}
-					alt={song.title}
+					src={`${API_URL}/${currentSong.cover}`}
+					alt={currentSong.title}
 					width={200}
 					height={200}
 					className='w-full rounded-xl'
 				/>
 				<h2 className='absolute inset-x-0 bottom-0 rounded-b-xl bg-gradient-to-b from-transparent via-black/30 to-black/40 p-2 pt-8 text-center text-xl font-semibold text-white'>
-					{song.title}
+					{currentSong.title}
 				</h2>
 			</div>
 			<div className='mt-4 rounded-xl bg-white p-6'>
@@ -127,7 +122,7 @@ const Player = ({ song, deleteSong }: T_Props) => {
 					onChange={handleProgressChange}
 				/>
 			</div>
-			<audio ref={audioRef} src={`${API_URL}/${song.audio}`} />
+			<audio ref={audioRef} src={`${API_URL}/${currentSong.audio}`} />
 		</article>
 	);
 };

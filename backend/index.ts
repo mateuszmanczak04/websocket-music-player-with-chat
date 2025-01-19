@@ -1,3 +1,4 @@
+import type { Song } from '@prisma/client';
 import cors from 'cors';
 import type { Request, Response } from 'express';
 import express from 'express';
@@ -90,6 +91,10 @@ io.on('connection', (socket) => {
 	socket.on('disconnect', () => {
 		connectedUsers.delete(userId);
 		io.emit('users', Array.from(connectedUsers));
+	});
+
+	socket.on('set-songs', (songs: Song[]) => {
+		io.emit('songs', songs);
 	});
 
 	socket.on('set-player-state', (state) => {

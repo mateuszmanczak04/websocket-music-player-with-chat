@@ -1,18 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useAppContext } from '../context/app-context';
 import { API_URL } from '../utils/api';
 import { Song } from '../utils/types';
 
-type T_Props = {
-	addSong: (song: Song) => void;
-};
-
-const UploadForm = ({ addSong }: T_Props) => {
+const UploadForm = () => {
 	const [title, setTitle] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
+	const { addSong } = useAppContext();
 
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();

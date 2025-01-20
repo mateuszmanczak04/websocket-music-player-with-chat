@@ -6,7 +6,7 @@ import { cn } from '../utils/cn';
 
 const ActiveUsers = () => {
 	const { users, user } = useAppContext();
-	const [toggler, setToggler] = useState(false);
+	const [, setToggler] = useState(false);
 
 	// Toggles the component every second to update the UI
 	useEffect(() => {

@@ -49,7 +49,7 @@ const Player = () => {
 		setLocalProgress(playerState.currentProgress);
 
 		audioRef.current.currentTime = playerState.currentProgress;
-		if (playerState.isPlaying) {
+		if (playerState.isPlaying && audioRef.current) {
 			audioRef.current.play();
 		} else {
 			audioRef.current.pause();

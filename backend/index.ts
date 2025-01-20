@@ -17,14 +17,14 @@ import {
 } from './controllers/songController';
 import { streamAudio } from './controllers/streamingController';
 import db from './prisma/database';
+import { getLocalNetworkIP } from './utils/ip';
 
 const app = express();
 const server = http.createServer(app);
-const port = process.env.PORT || 4000;
 
 // CORS configuration
 const corsOptions = {
-	origin: 'http://localhost:3000',
+	origin: '*',
 	optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -64,7 +64,7 @@ app.get('/', (req: Request, res: Response) => {
 
 const io = new Server(server, {
 	cors: {
-		origin: 'http://localhost:3000',
+		origin: '*',
 		methods: ['GET', 'POST'],
 	},
 });
@@ -159,6 +159,9 @@ io.on('connection', (socket) => {
 	});
 });
 
-server.listen(port, () => {
-	console.log(`Server is running on port ${port}`);
+const port = process.env.PORT || 4000;
+const ip = getLocalNetworkIP();
+
+server.listen({ port, host: ip }, () => {
+	console.log(`Server is running on port http://${ip}:${port}`);
 });

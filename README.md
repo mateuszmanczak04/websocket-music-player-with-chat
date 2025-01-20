@@ -1,6 +1,4 @@
-# It's a Spotify Clone app made for my Computer Networks university course
-
-Frontend is running on port 3000 and backend on 4000
+It's a Spotify Clone app made for my Computer Networks university course
 
 # Getting started
 

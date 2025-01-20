@@ -56,7 +56,12 @@ const Player = () => {
 		}
 	}, [playerState]);
 
-	if (!currentSong) return <p className='mt-4'>No song selected</p>;
+	if (!currentSong)
+		return (
+			<main className='group flex h-full min-w-96 flex-1 flex-col rounded-xl p-6'>
+				<p className='mt-4'>No song selected</p>
+			</main>
+		);
 
 	return (
 		<main className='group flex h-full min-w-96 flex-1 flex-col rounded-xl p-6'>

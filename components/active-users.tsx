@@ -1,12 +1,21 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useAppContext } from '../context/app-context';
 import { cn } from '../utils/cn';
 
 const ActiveUsers = () => {
 	const { users, user } = useAppContext();
+	const [toggler, setToggler] = useState(false);
 
-	console.log(users);
+	// Toggles the component every second to update the UI
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setToggler((prev) => !prev);
+		}, 1000);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	return (
 		<ul className='mt-2 flex flex-wrap gap-x-2 border-b border-neutral-300 pb-4'>

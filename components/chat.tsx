@@ -72,7 +72,15 @@ const Chat = () => {
 								'self-end bg-blue-500 text-white',
 						)}>
 						<p>{message.username}</p>
-						<p className='font-bold'>{decryptMessage(message.content, groupKey)}</p>
+						<p>
+							{(() => {
+								try {
+									return decryptMessage(message.content, groupKey);
+								} catch {
+									return 'Unable to decrypt message';
+								}
+							})()}
+						</p>
 					</div>
 				))}
 			</div>

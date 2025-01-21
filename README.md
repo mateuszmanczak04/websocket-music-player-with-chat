@@ -2,21 +2,25 @@ It's a Spotify Clone app made for my Computer Networks university course
 
 # Getting started
 
+(Commands are made for "Bun" - Node.js package manager)
+
 You have to open 2 terminals at the same time as frontend and backend are running separately.
-
-First terminal (frontend):
-
-1. run `bun install`
-2. run `bun run dev`
-
-Second terminal (backend):
 
 1. cd backend
 2. run `bun install`
 3. touch `.env`
 4. put `DATABASE_URL` variable into `.env` file, it should be postgres database
-5. run `bunx prisma db push`
-6. run `bun run dev`
+5. run `bunx prisma generate`
+6. run `bunx prisma db push`
+7. run `bun run dev`
+
+First terminal (frontend):
+
+1. replace `API_URL` in `/utils/api.ts` with the ip from backend
+2. run `bun install`
+3. run `bun run dev`
+
+Second terminal (backend):
 
 # Opening the app
 
